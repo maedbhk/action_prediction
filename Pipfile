@@ -1,0 +1,35 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+ipykernel = "==5.1.2"
+pandas = "==0.25.0"
+pip = "*"
+glfw = "*"
+scipy = "*"
+pyopengl = "*"
+patsy = "*"
+numpy = "*"
+ipython = "*"
+matplotlib = "*"
+h5py = "*"
+cython = "*"
+numexpr = "*"
+psutil = "*"
+pyzmq = "*"
+msgpack_python = "*"
+glfw = "*"
+nslr = "*"
+python-dateutil = "*"
+av = "*"
+opencv-python = "*"
+pupil-apriltags = "*"
+nbconvert = "==5.4.1"
+
+[requires]
+python_version = "3.7"
