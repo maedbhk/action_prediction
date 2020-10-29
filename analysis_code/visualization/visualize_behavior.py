@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
-from learning_connect.constants import Dirs, Defaults
+from analysis_code.constants import Dirs, Defaults
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -56,7 +56,7 @@ def _rename_run(dataframe):
 
     return df_all
 
-def _load_task_dataframe(task='action_observation', sessions=['fmri', 'behavioral']):
+def _load_task_dataframe(task='action_observation', sessions=['behavioral']):
     # initialise defaults
     defaults = Defaults()
 
