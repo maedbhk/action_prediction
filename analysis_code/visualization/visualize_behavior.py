@@ -56,7 +56,7 @@ def _rename_run(dataframe):
 
     return df_all
 
-def _load_task_dataframe(task='action_observation', sessions=['behavioral']):
+def _load_task_dataframe(task='social_prediction', sessions=['behavioral']):
     # initialise defaults
     defaults = Defaults()
 
