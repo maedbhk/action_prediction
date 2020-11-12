@@ -25,23 +25,17 @@ def _plotting_style():
     plt.rcParams["savefig.format"] = 'svg'
     plt.rc("axes.spines", top=False, right=False) # removes certain axes
 
-def _rename_sess(x, sess_type):
+def _rename_sess(x):
     defaults = Defaults()
 
-    if sess_type=='fmri':
-        remap = np.arange(3)
-        for i, key in enumerate(defaults.fmri_sessions):
-            if x in defaults.fmri_sessions[key]:
-                return int(key.split('-')[1]) + remap[i]
-    elif sess_type=='behavioral':
-        for key in defaults.behavioral_sessions:
-            if x in defaults.behavioral_sessions[key]:
-                return int(key.split('-')[1])*2
+    for key in defaults.behavioral_sessions:
+        if x in defaults.behavioral_sessions[key]:
+            return int(key.split('-')[1])
 
 def _rename_run(dataframe):
     defaults = Defaults()
 
-    num_sess = len(defaults.behavioral_sessions) + len(defaults.fmri_sessions)
+    num_sess = len(defaults.behavioral_sessions)
 
     sess_dict = {1: 0}
     for sess in np.arange(1,num_sess):
@@ -56,26 +50,22 @@ def _rename_run(dataframe):
 
     return df_all
 
-def _load_task_dataframe(task='social_prediction', sessions=['behavioral']):
+def _load_task_dataframe(task='social_prediction', sessions='behavioral'):
     # initialise defaults
     defaults = Defaults()
+
+    dirs = Dirs()
 
     # load tasks for each subj, concat in one dataframe
     df_all = pd.DataFrame()
     for subj in defaults.subj_id:
-        for sess in sessions:
-            # initialise dir class
-            dirs = Dirs(session=sess)
-            fpath = os.path.join(dirs.BEHAVE_DIR, subj, f'{sess}_{subj}_{task}.csv')
-            if os.path.exists(fpath):
-                df = pd.read_csv(fpath)
-                df['session_type'] = sess
-                df['subj_id'] = subj
-                df['session_num'] = df['run_num'].apply(lambda x: _rename_sess(x, sess_type=sess))
-                df_all = pd.concat([df_all, df], sort=False)
-    
-    # rename runs
-    df_all = _rename_run(dataframe=df_all)
+        
+        fpath = os.path.join(dirs.BEHAVE_DIR, subj, f'behavioral_{subj}_{task}.csv')
+        if os.path.exists(fpath):
+            df = pd.read_csv(fpath)
+            df['subj_id'] = subj
+            df['session_num'] = df['run_num'].apply(lambda x: _rename_sess(x))
+            df_all = pd.concat([df_all, df], sort=False)
 
     return df_all
 
@@ -85,9 +75,6 @@ def _load_run_dataframe():
 
     # initialise dir class
     dirs = Dirs()
-
-    # initialise defaults
-    defaults = Defaults()
 
     # load run file for each subj, concat in one dataframe
     df_all = pd.DataFrame()
@@ -101,111 +88,32 @@ def _load_run_dataframe():
 
     return df_all
 
-def plot_behavior_acc(x='run_num_new', y='corr_resp', hue='condition_name', hue_order=['easy', 'hard']):
-
-    # set up plot
-    plt.clf()
-    _plotting_style()
-
-    x_pos = -0.2
-    y_pos = 1.02
-
-    nrows = 2
-    ncols = 3
-
-    fig = plt.figure(figsize=(10,10));
-    gs = GridSpec(nrows, ncols, figure=fig);
+def plot_behavior_acc(dataframe, x='run_num', y='corr_resp', hue='condition_name']):
 
     # initialise defaults
     defaults = Defaults()
 
-    idx = 0
-    for row in range(nrows):
-        for col in range(ncols):
+    # plot data
+    sns.lineplot(x=x, y=y, hue=hue, data=dataframe)
 
-            # define subplot
-            ax = fig.add_subplot(gs[row, col])
+    plt.legend(fontsize=15)
+    plt.ylabel(y, fontsize=20)
+    plt.xlabel('Run', fontsize=20);
 
-            df = _load_task_dataframe(task=defaults.tasks[idx])
-
-            # plot data
-            sns.lineplot(x=x, y=y, hue=hue, data=df, hue_order=hue_order, ax=ax)
-
-            # plot session info if x axis is run_num
-            if x=='run_num_new':
-                sess_run = df.groupby('session_num').apply(lambda x: x['run_num_new'].min())
-                if len(sess_run)==5:
-                    linestyles = ['solid', 'dashed', 'solid', 'dashed', 'solid']
-                else:
-                    linestyles = np.tile('dashed', len(sess_run))
-                for i, s in enumerate(sess_run):
-                    plt.axvline(s, 0, 1, color='k', linestyle=linestyles[i])
-
-            ax.text(x_pos + 0.3, 1.1, defaults.tasks[idx], transform=ax.transAxes, fontsize=15,
-            verticalalignment='top')
-            plt.legend(fontsize=15)
-            plt.ylabel(y, fontsize=20)
-            plt.xlabel('Run', fontsize=20)
-
-            idx = idx + 1
-            if idx==len(defaults.tasks):
-                break
-    fig.tight_layout(pad=2.0)
     plt.show()
 
-def plot_behavior_rt(x='run_num_new', y='rt', hue='condition_name', hue_order=['easy', 'hard']):
-
-    # set up plot
-    plt.clf()
-    _plotting_style()
-
-    x_pos = -0.2
-    y_pos = 1.02
-
-    nrows = 2
-    ncols = 3
-
-    fig = plt.figure(figsize=(10,10));
-    gs = GridSpec(nrows, ncols, figure=fig);
+def plot_behavior_rt(dataframe, x='run_num', y='rt', hue='condition_name'):
 
     # initialise defaults
     defaults = Defaults()
 
-    idx = 0
-    for row in range(nrows):
-        for col in range(ncols):
+    # plot data
+    sns.lineplot(x=x, y=y, hue=hue, data=dataframe[dataframe['corr_resp']==1])
 
-            # define subplot
-            ax = fig.add_subplot(gs[row, col])
+    plt.legend(fontsize=15)
+    plt.ylabel(y, fontsize=20)
+    plt.xlabel('Run', fontsize=20)
 
-            df = _load_task_dataframe(task=defaults.tasks[idx])
-            
-            # get only correct trials for rt
-            df = df[df['corr_resp']==1]
-
-            # plot data
-            sns.lineplot(x=x, y=y, hue=hue, data=df, hue_order=hue_order, ax=ax)
-
-            # plot session info if x axis is run_num
-            if x=='run_num_new':
-                sess_run = df.groupby('session_num').apply(lambda x: x['run_num_new'].min())
-                if len(sess_run)==5:
-                    linestyles = ['solid', 'dashed', 'solid', 'dashed', 'solid']
-                else:
-                    linestyles = np.tile('dashed', len(sess_run))
-                for i, s in enumerate(sess_run):
-                    plt.axvline(s, 0, 1, color='k', linestyle=linestyles[i])
-
-            ax.text(x_pos + 0.3, 1.1, defaults.tasks[idx], transform=ax.transAxes, fontsize=15,
-            verticalalignment='top')
-            plt.legend(fontsize=15)
-            plt.ylabel(y, fontsize=20)
-            plt.xlabel('Run', fontsize=20)
-
-            idx = idx + 1
-            if idx==len(defaults.tasks):
-                break
-    fig.tight_layout(pad=2.0)
     plt.show()
 
 def check_ttl():

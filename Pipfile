@@ -12,6 +12,8 @@ pandas = "==0.25.0"
 seaborn = "*"
 numpy = "*"
 analysis-code = {editable = true, path = "."}
+jupyter = "*"
+notebook = "*"
 
 [requires]
 python_version = "3.7"
