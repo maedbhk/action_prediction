@@ -9,6 +9,7 @@ pylint = "*"
 [packages]
 ipykernel = "==5.1.2"
 pandas = "==0.25.0"
+matplotlib = "*"
 seaborn = "*"
 numpy = "*"
 analysis-code = {editable = true, path = "."}

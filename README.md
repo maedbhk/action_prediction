@@ -3,6 +3,29 @@ social_eye
 
 Investigating social prediction using eye tracking and behavioral performance
 
+### Installing the Required Python Packages
+
+This project uses [`pipenv`](https://github.com/pypa/pipenv) for virtual environment and python package management.
+
+Install pipenv globally if it's not already installed:
+
+    $ brew install pipenv
+
+Navigate to the top-level directory in `social_eye` and install the packages from the `Pipfile.lock`.
+This will automatically create a new virtual environment for you and install all requirements using the correct version of python.
+
+    $ pipenv install
+
+## Activating the virtual environment:
+
+    $ pipenv shell
+
+> NOTE: To deactivate the virtual environment when you are done working, simply type `exit`
+
+## Activating the ipykernel
+
+    $ python -m ipykernel install --user --name social_eye
+
 Project Organization
 ------------
 
@@ -10,14 +33,10 @@ Project Organization
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
+    │   ├── eyetracking    <- eyetracking data
+    │   └── behavior       <- behavioral data
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
     │                         the creator's initials, and a short `-` delimited description, e.g.
@@ -28,30 +47,21 @@ Project Organization
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
     │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
+    ├── Pipfile            <- The requirements file for reproducing the analysis environment
     │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
+    ├── setup.py           <- makes project pip installable (pipenv install -e .) so src can be imported
+    ├── analysis_code                <- Source code for use in this project.
     │   ├── __init__.py    <- Makes src a Python module
+    |   |
+    │   |── constants.py   <- Module to set default directories for project
     │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
+    │   ├── scripts        <- Scripts to transfer data from savio
+    │   │   └── data_transfer.py
+    |   |
+    │   │── visualize_eye.py  <- Module to visualize eyetracking
     │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
+    │   └── visualize_behavior.py  <- Module to visualize behavior
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
-
 --------
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
