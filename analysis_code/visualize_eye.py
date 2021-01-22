@@ -3,54 +3,15 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.express as px
+# import plotly.express as px
 from matplotlib.gridspec import GridSpec
-import cv2
+# import cv2
 from datetime import date
 
-from learning_connect.constants import Dirs, Defaults
+from analysis_code.constants import Dirs, Defaults
 
 import warnings
-warnings.filterwarnings("ignore")
-
-def load_data():
-    # initialise defaults
-    defaults = Defaults() 
-    
-    dirs = Dirs(session_type='behavioral')  
-
-    # load data
-    dataframe = pd.read_csv(os.path.join(dirs.EYE_DIR, 'pl_msgs_events_group.csv'))
-
-    # recode some variables (easier for visualization)
-    dataframe['subj'] = dataframe['subj'].apply(lambda x: defaults.subj_id[x]).str.extract('(\d+)')
-    dataframe['run'] = dataframe['run'] + 1
-    dataframe['sess'] = dataframe['sess'].str.extract('(\d+)') 
-
-    # filter events
-    dataframe = _filter_data(dataframe)
-
-    return dataframe   
-
-def _distance(row, center):
-    return np.sqrt((row['mean_gx']-center[0])**2+(row['mean_gy']-center[1])**2)
-
-def _process_fixations(dataframe):
-    df = dataframe[dataframe['type']=='fixations']
-    df = df.query('mean_gx>=0 and mean_gx<=1 and mean_gy>=0 and mean_gy<=1')
-    duration = np.mean(df['duration'])
-    center = (np.mean(df['mean_gx']), np.mean(df['mean_gy']))
-    df['dispersion'] = df.apply(_distance, args=[center], axis=1)
-    return df
-
-def _process_saccades(dataframe):
-    return dataframe.query(f'type=="saccade" and amplitude<1')
-
-def _filter_data(dataframe):
-    fix = _process_fixations(dataframe=dataframe)
-    sacc = _process_saccades(dataframe=dataframe)
-    blink = dataframe.query('type=="blink"')
-    return pd.concat([fix, sacc, blink])
+warnings.filterwarnings("ignore")  
 
 def _gaussian(x, sdx, y=None, sdy=None):
     

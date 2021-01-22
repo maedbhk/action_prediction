@@ -22,7 +22,7 @@ class Defaults:
 
 class Dirs: 
 
-    def __init__(self, session='behavioral'):
+    def __init__(self):
         self.BASE_DIR = Path(__file__).absolute().parent.parent / 'data'
         self.BEHAVE_DIR = self.BASE_DIR / 'behavior'
         self.EYE_DIR = self.BASE_DIR / 'eyetracking'

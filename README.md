@@ -55,8 +55,7 @@ Project Organization
     |   |
     │   |── constants.py   <- Module to set default directories for project
     │   │
-    │   ├── scripts        <- Scripts to transfer data from savio
-    │   │   └── data_transfer.py
+    |   |──data_transfer.py <- transfer data from savio to local
     |   |
     │   │── visualize_eye.py  <- Module to visualize eyetracking
     │   │
