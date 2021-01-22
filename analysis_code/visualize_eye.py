@@ -227,10 +227,7 @@ def plot_heatmap(dataframe, dispsize=(1280, 768), img=None, alpha=0.5):
     
     return fig
 
-def generate_plots(dispsize=(1280, 768)):
-    # get data
-    dataframe = preprocess_data()
-
+def generate_plots(dataframe, dispsize=(1280, 768)):
     # count events
     plot_count_events(dataframe)
 

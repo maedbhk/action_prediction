@@ -4,11 +4,11 @@ import os
 
 from analysis_code.constants import Dirs, Defaults
 
-def load_behavior():
+def load_behavior(task='social_prediction'):
     # initialize dirs
     dirs = Dirs()
 
-    return pd.read_csv(os.path.join(dirs.BEHAVE_DIR, 'behavior-all-sessions.csv'))
+    return pd.read_csv(os.path.join(dirs.BEHAVE_DIR, f'behavior-{task}-all-sessions.csv'))
 
 def _filter_data(dataframe):
     fix = _process_fixations(dataframe=dataframe)
