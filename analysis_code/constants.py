@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 
 """
-Created on Oct 10 18:41:50
 Constants and defaults for running and visualizing connectivity models for the cerebellum learning project
 
 @author: Maedbh King
@@ -26,10 +25,3 @@ class Dirs:
         self.BASE_DIR = Path(__file__).absolute().parent.parent / 'data'
         self.BEHAVE_DIR = self.BASE_DIR / 'behavior'
         self.EYE_DIR = self.BASE_DIR / 'eyetracking'
-
-        # create folders if they don't already exist
-        # fpaths = [self.BETA_REG_DIR, self.CONN_TRAIN_DIR, self.CONN_EVAL_DIR, self.ATLAS]
-        # for fpath in fpaths:
-        #     if not os.path.exists(fpath):
-        #         print(f'creating {fpath} although this dir should already exist, check your folder transfer!')
-        #         os.makedirs(fpath)
