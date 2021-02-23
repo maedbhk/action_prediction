@@ -1,7 +1,7 @@
-social_eye
+action_prediction
 ==============================
 
-Investigating social prediction using eye tracking and behavioral performance
+Investigating action prediction using eye tracking and behavioral performance (action observation and social prediction tasks)
 
 ### Installing the Required Python Packages
 
@@ -24,7 +24,7 @@ This will automatically create a new virtual environment for you and install all
 
 ## Activating the ipykernel
 
-    $ python -m ipykernel install --user --name social_eye
+    $ python -m ipykernel install --user --name action_prediction
 
 Project Organization
 ------------
@@ -33,8 +33,8 @@ Project Organization
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
-    │   ├── eyetracking    <- eyetracking data
-    │   └── behavior       <- behavioral data
+    │   ├── eyetracking    <- eyetracking data `group_eyetracking.csv`
+    │   └── behavior       <- behavioral data `group_behavior.csv`
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
@@ -50,12 +50,12 @@ Project Organization
     ├── Pipfile            <- The requirements file for reproducing the analysis environment
     │
     ├── setup.py           <- makes project pip installable (pipenv install -e .) so src can be imported
-    ├── analysis_code                <- Source code for use in this project.
+    ├── analysis_code      <- Source code for use in this project.
     │   ├── __init__.py    <- Makes src a Python module
     |   |
     │   |── constants.py   <- Module to set default directories for project
     │   │
-    |   |──data_transfer.py <- transfer data from savio to local
+    |   |──scripts         <- folder that contains scripts
     |   |
     │   │── visualize_eye.py  <- Module to visualize eyetracking
     │   │
