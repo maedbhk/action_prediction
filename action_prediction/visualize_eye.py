@@ -3,15 +3,15 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-# import plotly.express as px
+import plotly.express as px
 from matplotlib.gridspec import GridSpec
-# import cv2
+import cv2
 from datetime import date
 
-from analysis_code.constants import Dirs, Defaults
-
+from action_prediction import constants as const
 import warnings
 warnings.filterwarnings("ignore")  
+
 
 def _gaussian(x, sdx, y=None, sdy=None):
     
@@ -87,11 +87,8 @@ def _draw_display(dispsize=(1280, 768), img=None):
     return fig, ax
 
 def _get_img(task='action_observation'):
-    # initialise directoreis
-    dirs = Dirs(session_type='behavioral')
-
     # get path to example video
-    videofile = os.path.join(dirs.EYE_DIR, f'{task}.mp4')
+    videofile = os.path.join(const.EYE_DIR, f'{task}.mp4')
 
     # open video and grab first image
     vidcap = cv2.VideoCapture(videofile)
@@ -109,28 +106,15 @@ def _rescale_fixations(dataframe, dispsize):
     return dataframe
 
 def plot_count_events(dataframe):
-    df = dataframe.groupby(['type', 'task', 'event_type'])['type'].count().reset_index(name="count")
+    task = dataframe['task'].unique()[0]
+    df = dataframe.groupby(['type'])['type'].count().reset_index(name="count")
     
-    # plot saccades
     plt.figure()
-    sns.barplot(x='task', y='count', hue='event_type', data=df.query('type=="saccade"'))
+    sns.barplot(x='type', y='count', data=df)
     plt.xticks(rotation='45'); 
     plt.xlabel('')
-    plt.ylabel("Number of Saccades", size=15);
-
-    # plot dataframe
-    plt.figure()
-    sns.barplot(x='task', y='count', hue='event_type', data=df.query('type=="fixations"'))
-    plt.xticks(rotation='45'); 
-    plt.xlabel('')
-    plt.ylabel("Number of Fixations", size=15);
-
-    # plot blinks
-    plt.figure()
-    sns.barplot(x='task', y='count', hue='event_type', data=df.query('type=="blink"'))
-    plt.xticks(rotation='45'); 
-    plt.xlabel('')
-    plt.ylabel("Number of Blinks", size=15);
+    plt.ylabel("Count", size=15);
+    plt.title(task)
 
 def plot_gaze_positions(dataframe, event_type='task', hue='task'):
     plt.figure()
@@ -228,6 +212,7 @@ def plot_heatmap(dataframe, dispsize=(1280, 768), img=None, alpha=0.5):
     return fig
 
 def generate_plots(dataframe, dispsize=(1280, 768)):
+
     # count events
     plot_count_events(dataframe)
 

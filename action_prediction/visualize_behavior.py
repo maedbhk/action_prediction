@@ -3,9 +3,10 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.express as px
 from matplotlib.gridspec import GridSpec
 
-from analysis_code.constants import Dirs, Defaults
+from action_prediction import constants as const
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -25,33 +26,6 @@ def _plotting_style():
     plt.rcParams["savefig.format"] = 'svg'
     plt.rc("axes.spines", top=False, right=False) # removes certain axes
 
-def plot_behavior_acc(dataframe, x='run_num', y='corr_resp', hue='condition_name'):
-
-    # initialise defaults
-    defaults = Defaults()
-
-    # plot data
-    sns.lineplot(x=x, y=y, hue=hue, data=dataframe)
-
-    plt.legend(fontsize=15)
-    plt.ylabel(y, fontsize=20)
-    plt.xlabel('Run', fontsize=20);
-
-    plt.show()
-
-def plot_behavior_rt(dataframe, x='run_num', y='rt', hue='condition_name'):
-
-    # initialise defaults
-    defaults = Defaults()
-
-    # plot data
-    sns.lineplot(x=x, y=y, hue=hue, data=dataframe[dataframe['corr_resp']==1])
-
-    plt.legend(fontsize=15)
-    plt.ylabel(y, fontsize=20)
-    plt.xlabel('Run', fontsize=20)
-
-    plt.show()
-
-
- 
+def plot_acc():
+    pass
+    
