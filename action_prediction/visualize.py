@@ -3,15 +3,29 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.express as px
+# import plotly.express as px
 from matplotlib.gridspec import GridSpec
-import cv2
+# import cv2
 from datetime import date
 
 from action_prediction import constants as const
 import warnings
 warnings.filterwarnings("ignore")  
 
+def plotting_style():
+    # fig = plt.figure(num=2, figsize=[20,8])
+    plt.style.use('seaborn-poster') # ggplot
+    plt.rc('font', family='sans-serif') 
+    plt.rc('font', serif='Helvetica Neue') 
+    plt.rc('text', usetex='false') 
+    plt.rcParams['lines.linewidth'] = 2
+    plt.rc('xtick', labelsize=14)     
+    plt.rc('ytick', labelsize=14)
+    plt.rcParams.update({'font.size': 14})
+    plt.rcParams["axes.labelweight"] = "regular"
+    plt.rcParams["font.weight"] = "regular"
+    plt.rcParams["savefig.format"] = 'svg'
+    plt.rc("axes.spines", top=False, right=False) # removes certain axes
 
 def _gaussian(x, sdx, y=None, sdy=None):
     
@@ -105,12 +119,12 @@ def _rescale_fixations(dataframe, dispsize):
 
     return dataframe
 
-def plot_count_events(dataframe):
+def plot_count_events(dataframe, hue='type'):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['type'])['type'].count().reset_index(name="count")
-    
+    df = dataframe.groupby(['run_num', 'subj', 'type'])['type'].count().reset_index(name="count")
+
     plt.figure()
-    sns.barplot(x='type', y='count', data=df)
+    sns.lineplot(x='run_num', y='count', hue=hue, data=df)
     plt.xticks(rotation='45'); 
     plt.xlabel('')
     plt.ylabel("Count", size=15);
@@ -237,6 +251,14 @@ def generate_plots(dataframe, dispsize=(1280, 768)):
                     dispsize=dispsize, 
                     img=img, 
                     alpha=0.5)
+
+def plot_acc(dataframe, hue='condition_name'):
+    sns.lineplot(x='run_num',y='corr_resp', hue=hue, data=dataframe)
+    plt.axvline(x=8, ymin=0, color='k', linestyle='--')
+
+def plot_rt(dataframe, hue='condition_name'):
+    sns.lineplot(x='run_num',y='rt', hue=hue, data=dataframe.query('corr_resp==True'))
+    plt.axvline(x=8, ymin=0)
 
 
  
