@@ -132,7 +132,7 @@ def plot_count_events(dataframe, hue='type'):
 
 def plot_gaze_positions(dataframe, event_type='task', hue='task'):
     plt.figure()
-    sns.kdeplot(x='mean_gx', y='mean_gy', hue=hue, data=dataframe.query(f'event_type=="{event_type}"'), n_levels=50, shade=True, shadeLowest=False, alpha=0.5, legend_out=False)
+    sns.kdeplot(x='mean_gx', y='mean_gy', data=dataframe, n_levels=50, shade=True, shadeLowest=False, alpha=0.5, legend_out=False)
     plt.title(f'gaze positions for {event_type}')
     # sns.scatterplot(x='mean_gx', y='mean_gy', hue='task', data=dataframe.query(f'event_type=="{event_type}"')); 
     plt.axis('equal');
