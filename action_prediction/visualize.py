@@ -58,7 +58,7 @@ def _gaussian(x, sdx, y=None, sdy=None):
     
     return M
 
-def _draw_display(dispsize=(1280, 768), img=None):
+def _draw_display(dispsize=(1280, 720), img=None):
     """Returns a matplotlib.pyplot Figure and its axes, with a size of
     dispsize, a black background colour, and optionally with an image drawn
     onto it
@@ -130,14 +130,17 @@ def plot_count_events(dataframe, hue='type'):
     plt.ylabel("Count", size=15);
     plt.title(task)
 
-def plot_gaze_positions(dataframe, event_type='task', hue='task'):
+def plot_gaze_positions(dataframe, dispsize=(1280, 720), hue='task'):
     plt.figure()
-    sns.kdeplot(x='mean_gx', y='mean_gy', data=dataframe, n_levels=50, shade=True, shadeLowest=False, alpha=0.5, legend_out=False)
-    plt.title(f'gaze positions for {event_type}')
-    # sns.scatterplot(x='mean_gx', y='mean_gy', hue='task', data=dataframe.query(f'event_type=="{event_type}"')); 
-    plt.axis('equal');
+    sns.kdeplot(x='mean_gx', y='mean_gy', data=dataframe, hue=hue, n_levels=50, shade=True, shadeLowest=False, alpha=0.5, legend_out=False)
+    
+    plt.title(f'gaze positions')
+    # sns.scatterplot(x='mean_gx', y='mean_gy', hue=hue data=dataframe); 
+    # plt.axis('equal');
+    plt.xlim(xmin=0, xmax=dispsize[0])
+    plt.ylim(ymin=0, ymax=dispsize[1])
 
-def plot_heatmap(dataframe, dispsize=(1280, 768), img=None, alpha=0.5):
+def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     """Draws a heatmap of the provided fixations, optionally drawn over an
     image, and optionally allocating more weight to fixations with a higher
     duration.

@@ -19,3 +19,4 @@ tasks = ['semantic_prediction', 'visual_search', 'action_observation', 'social_p
 BASE_DIR = Path(__file__).absolute().parent.parent / 'data'
 BEHAVE_DIR = BASE_DIR / 'behavior'
 EYE_DIR = BASE_DIR / 'eyetracking'
+
