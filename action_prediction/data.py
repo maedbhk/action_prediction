@@ -27,7 +27,7 @@ class DataSet:
 
         # drop some cols
         dataframe.drop(['start_time', 'timestamp', 'timestamp_sec', 'run_num_new', 'run_name'], axis=1, inplace=True)
-        dataframe = dataframe.sort_values(by=['subj', 'run_num', 'block_iter'])
+        # dataframe = dataframe.sort_values(by=['subj', 'run_num', 'block_iter'])
         return dataframe.reset_index(drop=True)
 
     def filter_eye(self, dataframe):
@@ -52,7 +52,7 @@ class DataSet:
         dataframe = self._rescale_fixations(dataframe=dataframe, dispsize=(1280, 720))
         
         # filter data to only include specific task
-        dataframe = dataframe.query(f'task=="{self.task}" and event_type!="instructions"')
+        dataframe = dataframe.query(f'task=="{self.task}"')
 
         # cols_to_group = ['run_num', 'block_iter', 'subj']
         # dataframe['onset_sec_corr'] = dataframe.groupby(cols_to_group).apply(
@@ -74,7 +74,8 @@ class DataSet:
         dataframe_eye['real_start_time'] = self._find_nearest(dataframe_behav['real_start_time'], dataframe_eye['onset_sec_corr'])
 
         # merge behav with eyetracking data
-        dataframe = dataframe_eye.merge(dataframe_behav, on=['subj', 'run_num', 'block_iter', 'real_start_time'])
+        # dataframe = dataframe_eye.merge(dataframe_behav, on=['subj', 'run_num', 'block_iter', 'real_start_time'])
+        dataframe = dataframe_eye
         cols_to_keep = [col for col in dataframe.columns if 'Unnamed' not in col]
         return dataframe[cols_to_keep]
 
