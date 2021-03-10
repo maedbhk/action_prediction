@@ -8,39 +8,43 @@ class DataSet:
 
     def __init__(self, task='social_prediction'):
         self.task = task
+        self.dispsize = (1280, 720)
 
-    def load_eye(self):
-        eye_fname = 'group_eyetracking.csv'
+    def load_eye(self, data_type='events'):
+        """loads preprocessed eyetracking data 
+            Args:   
+                data_type (str): 'events' or 'samples'
+            Returns: 
+            filtered eyetracking data
+        """
+        eye_fname = f'group_eyetracking_{data_type}.csv'
         df = pd.read_csv(os.path.join(const.EYE_DIR, eye_fname))
-
-        return self.filter_eye(dataframe=df)
+        df_filtered = self.filter_eye(dataframe=df)
+        return df_filtered
 
     def load_behav(self):
+        """
+        loads preprocessed behavioral data
+        """
         behav_fname = 'group_behavior.csv'
         df = pd.read_csv(os.path.join(const.BEHAVE_DIR, behav_fname))
-
-        return self.filter_behav(dataframe=df)  
+        df_filtered = self.filter_behav(dataframe=df)  
+        return df_filtered  
 
     def filter_behav(self, dataframe):
         dataframe = dataframe.query(f'task=="{self.task}" and balance_exp=="behavioral"').dropna(axis=1)
         dataframe['sess'] = dataframe['sess'].div(2).astype(int)
 
         # drop some cols
-        dataframe.drop(['start_time', 'timestamp', 'timestamp_sec', 'run_num_new', 'run_name'], axis=1, inplace=True)
-        # dataframe = dataframe.sort_values(by=['subj', 'run_num', 'block_iter'])
-        return dataframe.reset_index(drop=True)
+        dataframe.drop(['timestamp', 'timestamp_sec', 'run_num_new', 'run_name'], axis=1, inplace=True)
+        return dataframe
 
     def filter_eye(self, dataframe):
-        # recode some variables (easier for visualization)
-        # dataframe['sess'] = dataframe['sess'].str.extract('(\d+)').astype(int)
-        # dataframe['run_num'] = dataframe['run'] + 1
-        # dataframe.loc[dataframe.sess==2, 'run_num'] = dataframe.loc[dataframe.sess==2, 'run_num']+7
-        
-        # # drop some cols
-        # dataframe.drop(['start_time', 'timestamp', 'run'], axis=1, inplace=True)
-
-        # # do some cleaning
-        # dataframe.rename({'block':'block_iter'}, axis=1, inplace=True)
+        """filter eyetracking dataframe
+            Args: 
+                dataframe (pd dataframe): preprocessed eyetracking data
+        """
+        dataframe.loc[dataframe.sess==2, 'run_num'] = dataframe.loc[dataframe.sess==2, 'run_num']+7
 
         # filter fixation, saccade, blinks
         fix = self._process_fixations(dataframe=dataframe)
@@ -48,18 +52,12 @@ class DataSet:
         blink = dataframe.query('type=="blink"')
         dataframe = pd.concat([fix, sacc, blink])
 
-        # rescale fixations
-        dataframe = self._rescale_fixations(dataframe=dataframe, dispsize=(1280, 720))
+        # # rescale fixations
+        dataframe = self._rescale_fixations(dataframe=dataframe)
         
         # filter data to only include specific task
-        dataframe = dataframe.query(f'task=="{self.task}"')
-
-        # cols_to_group = ['run_num', 'block_iter', 'subj']
-        # dataframe['onset_sec_corr'] = dataframe.groupby(cols_to_group).apply(
-        #     lambda x: x['onset_sec']-x['onset_sec'].head(1).values[0]
-        #     ).reset_index(drop=True).values
-        # dataframe = dataframe.sort_values(by=['subj', 'run_num', 'block_iter'])
-        return dataframe.reset_index(drop=True)
+        dataframe = dataframe.query(f'task=="{self.task}" and event_type!="instructions"')
+        return dataframe
 
     def merge_behav_eye(self, dataframe_behav, dataframe_eye):
         """merges behavioral and eyetracking dataframes on common keys
@@ -70,12 +68,9 @@ class DataSet:
             Returns: 
                 pd dataframe
         """
-        # add new start time for eyetracking
-        dataframe_eye['real_start_time'] = self._find_nearest(dataframe_behav['real_start_time'], dataframe_eye['onset_sec_corr'])
-
-        # merge behav with eyetracking data
-        # dataframe = dataframe_eye.merge(dataframe_behav, on=['subj', 'run_num', 'block_iter', 'real_start_time'])
-        dataframe = dataframe_eye
+        trial_start_times = dataframe_behav['start_time'].unique()
+        dataframe_eye['start_time'] = self._find_nearest(arr1=trial_start_times, arr2=dataframe_eye['onset_sec'])
+        dataframe = dataframe_eye.merge(dataframe_behav, on=['task', 'subj', 'run_num', 'sess', 'block_iter', 'start_time'], how='inner').dropna(axis=1)
         cols_to_keep = [col for col in dataframe.columns if 'Unnamed' not in col]
         return dataframe[cols_to_keep]
 
@@ -111,11 +106,11 @@ class DataSet:
     def _process_saccades(self, dataframe):
         return dataframe.query(f'type=="saccade" and amplitude<1')
         
-    def _rescale_fixations(self, dataframe, dispsize):
+    def _rescale_fixations(self, dataframe):
         x = dataframe['mean_gx']
-        dataframe['mean_gx'] = np.interp(x, (x.min(), x.max()), (0, dispsize[0]))
+        dataframe['mean_gx'] = np.interp(x, (x.min(), x.max()), (0, self.dispsize[0]))
 
         y = dataframe['mean_gy']
-        dataframe['mean_gy'] = np.interp(y, (y.min(), y.max()), (0, dispsize[1]))
+        dataframe['mean_gy'] = np.interp(y, (y.min(), y.max()), (0, self.dispsize[1]))
 
         return dataframe

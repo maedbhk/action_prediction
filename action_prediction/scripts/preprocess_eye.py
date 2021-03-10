@@ -47,46 +47,109 @@ def preprocess_eye(subj_fpath):
                     data = preprocess_et(subject='', datapath=run_dir, surfaceMap=False, eventfunctions=(make_fixations, make_blinks, make_saccades))
                     
                     # modify the msgs and save to disk
-                    msgs = _modify_msgs(dataframe=data[1])
+                    msgs_df = pd.read_csv(os.path.join(preprocess_dir, 'pl_msgs.csv'))
+                    msgs = _modify_msgs(dataframe=msgs_df)
                     msgs.to_csv(os.path.join(preprocess_dir, f'{subj}_{sess}_{run}_pl_msgs.csv'))
 
                     # merge msgs to events and save to disk
-                    events_msgs = _merge_msgs_events(events=data[2], msgs=msgs)
+                    events_df = pd.read_csv(os.path.join(preprocess_dir, 'pl_events.csv'))
+                    events_msgs = _merge_msgs_events(events=events_df, msgs=msgs)
                     events_msgs.to_csv(os.path.join(preprocess_dir, f'{subj}_{sess}_{run}_pl_msgs_events.csv'))
+
+                    # merge msgs to samples and save to disk
+                    samples_df = pd.read_csv(os.path.join(preprocess_dir, 'pl_samples.csv'))
+                    samples_msgs = _merge_msgs_samples(samples=samples_df, msgs=msgs)
+                    samples_msgs.to_csv(os.path.join(preprocess_dir, f'{subj}_{sess}_{run}_pl_msgs_samples.csv'))
+
                     print('Preprocessing complete!')
                 except: 
                     print('something went wrong with preprocessing ...')
             else:
                 print('These data have already been preprocessed ...')
 
+def concat_runs(subj_fpath):
+    # get all sessions
+    ses_dirs = glob.glob(os.path.join(subj_fpath, '*ses*'))
+
+    # get subj name
+    subj = Path(subj_fpath).name
+
+    df_events_all = pd.DataFrame()
+    df_samples_all = pd.DataFrame()
+    # loop over sessions
+    for ses_dir in np.sort(ses_dirs):
+
+        # get sess name
+        sess = Path(ses_dir).name
+
+        # get all runs
+        run_dirs = glob.glob(os.path.join(ses_dir, '*'))
+
+        # loop over runs
+        for run_dir in np.sort(run_dirs):
+
+            # get run name
+            run = Path(run_dir).name
+
+            # load preprocessed data for subj/sess
+            try: 
+                df_events = pd.read_csv(os.path.join(subj_fpath, sess, run, 'preprocessed', f'{subj}_{sess}_{run}_pl_msgs_events.csv'))
+                df_events['subj'] = subj
+                df_events['sess'] = sess
+
+                df_samples = pd.read_csv(os.path.join(subj_fpath, sess, run, 'preprocessed', f'{subj}_{sess}_{run}_pl_msgs_samples.csv'))
+                df_samples['subj'] = subj
+                df_samples['sess'] = sess
+
+                # clean up
+                df_events = _clean_up(dataframe=df_events)
+                df_samples = _clean_up(dataframe=df_samples)
+
+                # concat to dataframe
+                df_events_all = pd.concat([df_events_all, df_events])
+                df_samples_all = pd.concat([df_samples_all, df_samples])
+            except: 
+                print(f'no preprocessed data for {subj}_{sess}_{run}')
+
+    # clean up
+    df_events_all.to_csv(os.path.join(subj_fpath, f'eyetracking_events_{subj}.csv'), index=False)
+    df_samples_all.to_csv(os.path.join(subj_fpath, f'eyetracking_samples_{subj}.csv'), index=False)
+
 def group_data(data_dir):
-    # navigate to top-level subj dir
-    os.chdir(data_dir)
+    # get all subjs
+    subj_dirs = glob.glob(os.path.join(data_dir, '*s*'))
 
-    # get all preprocessed files
-    fpaths = set(glob.glob('**/**/*msgs_events*', recursive=True))
+    # loop over subjs
+    df_events_all = pd.DataFrame()
+    df_samples_all = pd.DataFrame()
+    for subj_dir in subj_dirs:
+        if os.path.isdir(subj_dir):
 
-    # loop over files
-    df_all = pd.DataFrame()
-    for fpath in list(fpaths):
+            # get subj name
+            subj = Path(subj_dir).name
 
-        # read in dataframe
-        df = pd.read_csv(fpath)
+            # load preprocessed data for subj/sess
+            try: 
+                df_events = pd.read_csv(os.path.join(subj_dir, f'eyetracking_events_{subj}.csv'))
+                df_samples = pd.read_csv(os.path.join(subj_dir, f'eyetracking_samples_{subj}.csv'))
 
-        # add subj, sess, run
-        df['subj'] = Path(fpath).name.split('_')[0]
-        df['sess'] = Path(fpath).name.split('_')[1]
-        df['run'] = Path(fpath).name.split('_')[2]
+                # concat to dataframe
+                df_events_all = pd.concat([df_events_all, df_events])
+                df_samples_all = pd.concat([df_samples_all, df_samples])
+            except: 
+                print(f'no preprocessed data for {subj}')
 
-        # load group dataframe if it exists and add results
-        group_fname = os.path.join(data_dir, 'group_eyetracking.csv')
+        print(f'saving {subj} to group')
 
-        # concat to group dataframe
-        df_all = pd.concat([df_all, df])
-        print(f'saving {fpath} to group dataframe')
+    df_events_all.to_csv(os.path.join(data_dir, f'group_eyetracking_events.csv'), index=False)
+    df_samples_all.to_csv(os.path.join(data_dir, f'group_eyetracking_samples.csv'), index=False)
+    print("done!")
 
-    # save out group dataframe
-    df_all.to_csv(group_fname, index=False)
+def _clean_up(dataframe):
+    dataframe['sess'] = dataframe['sess'].str.extract('(\d+)').astype(int)
+    dataframe.rename({'block': 'block_iter', 'run': 'run_num'}, axis=1, inplace=True)
+    
+    return dataframe
 
 def _extract_eventtype(x):
     if 'starting instructions' in x:
@@ -103,12 +166,41 @@ def _merge_msgs_events(events, msgs):
     for col in cols:
         events[col] = events[col].astype(int)
 
-    events_msgs = events.merge(msgs, left_on='start_time', right_on='timestamp')
+    events.rename({'start_time': 'timestamp'}, axis=1, inplace=True)
+    events_msgs = events.merge(msgs, on='timestamp')
+
+    events_msgs['timestamp'] = events_msgs['timestamp'] - events_msgs['timestamp'].head(1).values
+
+    # figure out onset sec of tasks
+    cols_to_group = ['task', 'run', 'block', 'event_type']
+    onsets = events_msgs.groupby(cols_to_group).apply(lambda x: x['timestamp'].iloc[0]).reset_index().rename({0:'subtract'}, axis=1)
+    events_msgs = events_msgs.merge(onsets, on=['task' ,'run', 'block', 'event_type'])
+    events_msgs['onset_sec'] = events_msgs['timestamp'] - events_msgs['subtract']
 
     return events_msgs
 
+def _merge_msgs_samples(samples, msgs):
+    samples['smpl_time'] = samples['smpl_time'].astype(int)
+
+    samples.rename({'smpl_time': 'timestamp'}, axis=1, inplace=True)
+    samples_msgs = samples.merge(msgs, on='timestamp')
+
+    samples_msgs['timestamp'] = samples_msgs['timestamp'] - samples_msgs['timestamp'].head(1).values
+
+    # figure out onset sec of tasks
+    cols_to_group = ['task', 'run', 'block', 'event_type']
+    onsets = samples_msgs.groupby(cols_to_group).apply(lambda x: x['timestamp'].iloc[0]).reset_index().rename({0:'subtract'}, axis=1)
+    samples_msgs = samples_msgs.merge(onsets, on=['task' ,'run', 'block', 'event_type'])
+    samples_msgs['onset_sec'] = samples_msgs['timestamp'] - samples_msgs['subtract']
+
+    return samples_msgs
+
 def _modify_msgs(dataframe):
-    dataframe['onset_sec'] = dataframe['exp_event'].str.extract('onset\:(\d+)').astype(int) + 1
+
+    # normalize timestamp
+    dataframe['timestamp'] = dataframe['timestamp'].astype(int)
+
+    # dataframe['onset_sec'] = dataframe['exp_event'].str.extract('onset\:(\d+)').astype(int) + 1
     dataframe['block'] = dataframe['exp_event'].str.extract('block\:(\d+)')
     dataframe['task'] = dataframe['exp_event'].str.extract('for\s(\w*)')
     dataframe['event_type'] = dataframe['exp_event'].apply(lambda x: _extract_eventtype(x))
@@ -120,7 +212,6 @@ def _modify_msgs(dataframe):
     dataframe = dataframe.query('event_type!="task_end"')
 
     # get missing timestamps
-    dataframe['timestamp'] = dataframe['timestamp'].astype(int)
     dataframe['time_diff'] = dataframe['timestamp'].diff(periods=-1)*-1
     dataframe = dataframe.dropna()
     dataframe['time_diff'] = dataframe['time_diff'].astype(int)
@@ -134,10 +225,9 @@ def _modify_msgs(dataframe):
 
     # expand timestamp and onset sec
     dataframe_expand['timestamp'] = np.arange(dataframe['timestamp'].head(1).values, dataframe['timestamp'].tail(1).values + dataframe['time_diff'].tail(1).values)
-    dataframe_expand['onset_sec'] = np.arange(dataframe['onset_sec'].head(1).values, dataframe['onset_sec'].tail(1).values + dataframe['time_diff'].tail(1).values)
 
     # drop time diff
-    dataframe_expand = dataframe_expand.drop('time_diff', axis=1)
+    dataframe_expand = dataframe_expand.drop({'time_diff'}, axis=1)
     return dataframe_expand
 
 @click.command()
@@ -147,11 +237,15 @@ def run(data_dir):
     # subj dirs
     subj_dirs = glob.glob(os.path.join(data_dir, '*'))
 
+    # loop over subjects
     for subj_fpath in subj_dirs:
         if Path(subj_fpath).name not in ['sON', 'sEA', 'sAA1', 's01']:
-            preprocess_eye(subj_fpath=subj_fpath)
+            if os.path.isdir(subj_fpath):
+                preprocess_eye(subj_fpath=subj_fpath)
+                concat_runs(subj_fpath=subj_fpath)
 
-    group_data(data_dir)
+    # group subject data
+    group_data(data_dir=data_dir)
 
 if __name__ == '__main__':
     run()
