@@ -119,16 +119,83 @@ def _rescale_fixations(dataframe, dispsize):
 
     return dataframe
 
-def plot_count_events(dataframe, hue='type'):
+def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['run_num', 'subj', 'type'])['type'].count().reset_index(name="count")
+    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
 
-    plt.figure()
-    sns.lineplot(x='run_num', y='count', hue=hue, data=df)
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))
     plt.xticks(rotation='45'); 
     plt.xlabel('')
-    plt.ylabel("Count", size=15);
+    plt.ylabel("Fixation Count", size=15);
     plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45)
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_saccade_count(dataframe, x='run_num', hue=None):
+    task = dataframe['task'].unique()[0]
+    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
+    plt.xticks(rotation='45'); 
+    plt.xlabel('')
+    plt.ylabel("Saccade Count", size=15);
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45)
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_diameter(dataframe, x='run_num', event_type='fixations', hue=None):
+    task = dataframe['task'].unique()[0]
+    sns.factorplot(x=x, y='diameter', hue=hue, data=dataframe.query(f'type=="{event_type}"'))
+    plt.xticks(rotation='45'); 
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_amplitude(dataframe, x='run_num', hue=None):
+    task = dataframe['task'].unique()[0]
+    sns.factorplot(x=x, y='amplitude', hue=hue, data=dataframe.query('type=="saccade"'))
+    plt.xticks(rotation='45'); 
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_fixation_duration(dataframe, x='run_num', hue=None):
+    task = dataframe['task'].unique()[0]
+    sns.factorplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
+    plt.xticks(rotation='45'); 
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_dispersion(dataframe, x='run_num', hue=None):
+    task = dataframe['task'].unique()[0]
+    sns.factorplot(x=x, y='dispersion', hue=hue, data=dataframe.query('type=="fixations"'))
+    plt.xticks(rotation='45'); 
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+def plot_peak_velocity(dataframe, x='run_num', hue=None):
+    task = dataframe['task'].unique()[0]
+    sns.factorplot(x=x, y='peak_velocity', hue=hue, data=dataframe.query('type=="saccade"'))
+    plt.xticks(rotation='45'); 
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
 def plot_gaze_positions(dataframe, dispsize=(1280, 720), hue='task'):
     plt.figure()
@@ -228,40 +295,19 @@ def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     
     return fig
 
-def generate_plots(dataframe, dispsize=(1280, 768)):
+def plot_acc(dataframe, x='run_num', hue='condition_name'):
+    sns.factorplot(x=x,y='corr_resp', hue=hue, data=dataframe)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45)
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
-    # count events
-    plot_count_events(dataframe)
-
-    # fixation positions
-    tasks = dataframe['task'].unique()
-    for task in tasks: 
-
-        # filter data
-        df = dataframe.query(f'task=="{task}" and type=="fixations"')
-
-        # kdeplot of fixation positions
-        plot_gaze_positions(dataframe=df, event_type='task')
-
-        # show background image for select tasks
-        if task=='action_observation':
-            img = _get_img(task=task)
-        else:
-            img = None
-
-        # draw heatmap of fixation positions
-        plot_heatmap(dataframe=df, 
-                    dispsize=dispsize, 
-                    img=img, 
-                    alpha=0.5)
-
-def plot_acc(dataframe, hue='condition_name'):
-    sns.lineplot(x='run_num',y='corr_resp', hue=hue, data=dataframe)
-    plt.axvline(x=8, ymin=0, color='k', linestyle='--')
-
-def plot_rt(dataframe, hue='condition_name'):
-    sns.lineplot(x='run_num',y='rt', hue=hue, data=dataframe.query('corr_resp==True'))
-    plt.axvline(x=8, ymin=0)
+def plot_rt(dataframe, x='run_num', hue='condition_name'):
+    sns.factorplot(x=x,y='rt', hue=hue, data=dataframe.query('corr_resp==True'))
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45) 
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
 
  
