@@ -121,9 +121,12 @@ def _rescale_fixations(dataframe, dispsize):
 
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+    if hue:
+        df = dataframe.groupby(['subj', 'type', x, hue])['type'].count().reset_index(name="count")
+    else: 
+        df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'), ci=None)
     plt.xticks(rotation='45'); 
     plt.xlabel('')
     plt.ylabel("Fixation Count", size=15);
@@ -135,10 +138,13 @@ def plot_fixation_count(dataframe, x='run_num', hue=None):
 
 def plot_saccade_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+    if hue:
+        df = dataframe.groupby(['subj', 'type', x, hue])['type'].count().reset_index(name="count")
+    else:
+        df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
-    plt.xticks(rotation='45'); 
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), ci=None)
+    plt.xticks(rotation='45');
     plt.xlabel('')
     plt.ylabel("Saccade Count", size=15);
     plt.title(task)
