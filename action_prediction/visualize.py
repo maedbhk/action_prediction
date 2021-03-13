@@ -119,6 +119,26 @@ def _rescale_fixations(dataframe, dispsize):
 
     return dataframe
 
+def visualize_corr(grid_table):
+    data = grid_table.drop(["x", "y","total"], axis=1)
+    correlations = data.corr()
+    labels = correlations.columns
+    corr_plot(correlations, labels)
+    return correlations
+
+def corr_plot(corr_mat, labels):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(corr_mat,cmap='coolwarm', vmin=0, vmax=1)
+    fig.colorbar(cax)
+    ticks = np.arange(0,len(labels),1)
+    ax.set_xticks(ticks)
+    plt.xticks(rotation=90)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+    plt.show()
+
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
     if hue:
