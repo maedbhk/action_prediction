@@ -142,14 +142,15 @@ def corr_plot(corr_mat, labels):
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
     if hue:
-        df = dataframe.groupby(['subj', 'type', x, hue])['type'].count().reset_index(name="count")
+        tmp = dataframe.groupby(["start_time", hue, "type", "run_num"])["type"].count().reset_index(name='count')
+        df = tmp.query('type=="fixations"').groupby([hue, 'run_num'])['count'].mean().reset_index()
     else: 
-        df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+        df = dataframe.groupby(['start_time', 'subj', 'type', 'run_num', x])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'), ci=None)
+    sns.factorplot(x=x, y='count', hue=hue, data=df, ci=None)   
     plt.xticks(rotation='45'); 
     plt.xlabel('')
-    plt.ylabel("Fixation Count", size=15);
+    plt.ylabel("Average # of Fixations", size=15);
     plt.title(task)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
