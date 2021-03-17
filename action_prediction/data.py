@@ -11,6 +11,10 @@ class DataSet:
         self.dispsize = (1280, 720)
 
     def load_eye(self, data_type='events'):
+        """ loads eyetracking data, either samples or events
+        Args: 
+            data_type (str): 'events' or 'samples'
+        """
         fpath = os.path.join(const.EYE_DIR, f'group_eyetracking_{data_type}_{self.task}.csv')
         if os.path.isfile(fpath):
             df = pd.read_csv(fpath)

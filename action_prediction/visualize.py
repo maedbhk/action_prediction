@@ -119,14 +119,38 @@ def _rescale_fixations(dataframe, dispsize):
 
     return dataframe
 
+def visualize_corr(grid_table):
+    data = grid_table.drop(["x", "y","total"], axis=1)
+    correlations = data.corr()
+    labels = correlations.columns
+    corr_plot(correlations, labels)
+    return correlations
+
+def corr_plot(corr_mat, labels):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(corr_mat,cmap='coolwarm', vmin=0, vmax=1)
+    fig.colorbar(cax)
+    ticks = np.arange(0,len(labels),1)
+    ax.set_xticks(ticks)
+    plt.xticks(rotation=90)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+    plt.show()
+
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+    if hue:
+        tmp = dataframe.groupby(["start_time", hue, "type", "run_num"])["type"].count().reset_index(name='count')
+        df = tmp.query('type=="fixations"').groupby([hue, 'run_num'])['count'].mean().reset_index()
+    else: 
+        df = dataframe.groupby(['start_time', 'subj', 'type', 'run_num', x])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))
+    sns.factorplot(x=x, y='count', hue=hue, data=df, ci=None)   
     plt.xticks(rotation='45'); 
     plt.xlabel('')
-    plt.ylabel("Fixation Count", size=15);
+    plt.ylabel("Average # of Fixations", size=15);
     plt.title(task)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
@@ -135,10 +159,13 @@ def plot_fixation_count(dataframe, x='run_num', hue=None):
 
 def plot_saccade_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
-    df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+    if hue:
+        df = dataframe.groupby(['subj', 'type', x, hue])['type'].count().reset_index(name="count")
+    else:
+        df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
-    plt.xticks(rotation='45'); 
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), ci=None)
+    plt.xticks(rotation='45');
     plt.xlabel('')
     plt.ylabel("Saccade Count", size=15);
     plt.title(task)
