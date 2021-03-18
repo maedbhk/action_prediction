@@ -224,15 +224,15 @@ def plot_peak_velocity(dataframe, x='run_num', hue=None):
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
-def plot_gaze_positions(dataframe, dispsize=(1280, 720), hue='task'):
+def plot_gaze_positions(dataframe, hue='task'):
     plt.figure()
     sns.kdeplot(x='mean_gx', y='mean_gy', data=dataframe, hue=hue, n_levels=50, shade=True, shadeLowest=False, alpha=0.5, legend_out=False)
     
     plt.title(f'gaze positions')
     # sns.scatterplot(x='mean_gx', y='mean_gy', hue=hue data=dataframe); 
     # plt.axis('equal');
-    plt.xlim(xmin=0, xmax=dispsize[0])
-    plt.ylim(ymin=0, ymax=dispsize[1])
+    # plt.xlim(xmin=0, xmax=dispsize[0])
+    # plt.ylim(ymin=0, ymax=dispsize[1])
 
 def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     """Draws a heatmap of the provided fixations, optionally drawn over an
