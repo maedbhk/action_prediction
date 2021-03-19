@@ -142,12 +142,11 @@ def corr_plot(corr_mat, labels):
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
     if hue:
-        tmp = dataframe.groupby([hue, 'subj', 'type', x])["type"].count().reset_index(name='count')
-        df = tmp.query('type=="fixations"').groupby([hue, x])['count'].mean().reset_index()
+        tmp = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
-        df = dataframe.groupby(['subj','type', x])['type'].count().reset_index(name="count")
+        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df, ci=None)   
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'), ci=None)   
     plt.xticks(rotation='45'); 
     plt.xlabel('')
     plt.ylabel("Average # of Fixations", size=15);
@@ -160,9 +159,9 @@ def plot_fixation_count(dataframe, x='run_num', hue=None):
 def plot_saccade_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
     if hue:
-        df = dataframe.groupby(['subj', 'type', x, hue])['type'].count().reset_index(name="count")
+        tmp = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else:
-        df = dataframe.groupby(['subj', 'type', x])['type'].count().reset_index(name="count")
+         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
 
     sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), ci=None)
     plt.xticks(rotation='45');
