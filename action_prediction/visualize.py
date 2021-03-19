@@ -142,7 +142,7 @@ def corr_plot(corr_mat, labels):
 def plot_fixation_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
     if hue:
-        tmp = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
+        df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
 
