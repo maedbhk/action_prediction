@@ -22,4 +22,12 @@ image_size = (1280,720)
 BASE_DIR = Path(__file__).absolute().parent.parent / 'data'
 BEHAVE_DIR = BASE_DIR / 'behavior'
 EYE_DIR = BASE_DIR / 'eyetracking'
+FIG_DIR = Path(__file__).absolute().parent.parent / 'figures'
+
+# create folders if they don't already exist
+fpaths = [FIG_DIR]
+for fpath in fpaths:
+    if not os.path.exists(fpath):
+        print(f'creating {fpath}')
+        os.makedirs(fpath)
 

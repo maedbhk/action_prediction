@@ -41,6 +41,8 @@ class DataSet:
         df = pd.read_csv(os.path.join(const.EYE_DIR, eye_fname))
         df_filtered = self._filter_eye(dataframe=df, data_type=data_type)
 
+        df_filtered['corr_resp'] = df_filtered['corr_resp'].astype(float)
+
         # option to save to disk
         if save:
             fname = f'group_eyetracking_{data_type}_{self.task}.csv'

@@ -27,6 +27,10 @@ def plotting_style():
     plt.rcParams["savefig.format"] = 'svg'
     plt.rc("axes.spines", top=False, right=False) # removes certain axes
 
+def _save_fig(plt, fname):
+    fpath = os.path.join(const.FIG_DIR, fname)
+    plt.savefig(fpath)
+
 def _gaussian(x, sdx, y=None, sdy=None):
     
     """Returns an array of numpy arrays (a matrix) containing values between
@@ -139,7 +143,7 @@ def corr_plot(corr_mat, labels):
     ax.set_yticklabels(labels)
     plt.show()
 
-def plot_fixation_count(dataframe, x='run_num', hue=None):
+def plot_fixation_count(dataframe, x='run_num', hue=None, save=True):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
@@ -149,12 +153,15 @@ def plot_fixation_count(dataframe, x='run_num', hue=None):
     sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'), ci=None)   
     plt.xticks(rotation='45'); 
     plt.xlabel('')
-    plt.ylabel("Average # of Fixations", size=15);
+    plt.ylabel("Fixation Count", size=15);
     plt.title(task)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+
+    if save:
+        _save_fig(plt, f'fixation_count_{task}.png')
 
 def plot_saccade_count(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
@@ -193,7 +200,7 @@ def plot_amplitude(dataframe, x='run_num', hue=None):
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
-def plot_fixation_duration(dataframe, x='run_num', hue=None):
+def plot_fixation_duration(dataframe, x='run_num', hue=None, save=True):
     task = dataframe['task'].unique()[0]
     sns.factorplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
     plt.xticks(rotation='45'); 
@@ -202,6 +209,10 @@ def plot_fixation_duration(dataframe, x='run_num', hue=None):
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.ylabel('Duration (ms)')
+    
+    if save:
+        _save_fig(plt, f'fixation_duration_{task}.png')
 
 def plot_dispersion(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
