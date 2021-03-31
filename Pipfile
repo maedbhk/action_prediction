@@ -16,6 +16,8 @@ action_prediction = {editable = true, path = "."}
 jupyter = "*"
 notebook = "*"
 sklearn = "*"
+scikit-learn = "*"
+plotly = "*"
 
 [requires]
 python_version = "3.7"
