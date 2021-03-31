@@ -41,8 +41,6 @@ class DataSet:
         df = pd.read_csv(os.path.join(const.EYE_DIR, eye_fname))
         df_filtered = self._filter_eye(dataframe=df, data_type=data_type)
 
-        df_filtered['corr_resp'] = df_filtered['corr_resp'].astype(float)
-
         # option to save to disk
         if save:
             fname = f'group_eyetracking_{data_type}_{self.task}.csv'
@@ -56,6 +54,8 @@ class DataSet:
         behav_fname = 'group_behavior.csv'
         df = pd.read_csv(os.path.join(const.BEHAVE_DIR, behav_fname))
         df_filtered = self._filter_behav(dataframe=df)  
+
+        df_filtered['corr_resp'] = df_filtered['corr_resp'].astype(float)
 
         #optionally save to disk
         if save:
