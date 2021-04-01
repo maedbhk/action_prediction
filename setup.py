@@ -7,7 +7,8 @@ setup(
     description='Investigating social and action prediction using eye tracking and behavioral performance',
     entry_points={
     'console_scripts': [
-        'transfer-data-from-savio=analysis_code.data_transfer:data_from_savio',
+        'transfer-behavior-from-savio=action_prediction.data_transfer:behavior_from_savio',
+        'transfer-eyetracking-from-savio=action_prediction.data_transfer:eyetracking_from_savio',
         ]
     },
     author='Shannon Lee and Maedbh King',
