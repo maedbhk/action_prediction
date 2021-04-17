@@ -1,8 +1,11 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 from action_prediction import modeling
 from action_prediction import constants as const
+
+
 
 def run(dataframe, model_names):
     """Run models for predicting accuracy
@@ -43,6 +46,6 @@ def run(dataframe, model_names):
                 print(f'error raised when fitting {model_name} model for {subj}')
 
     # compare models
-    fig = modeling.compare_models(model_results=models)    
-        
+    fig = modeling.compare_models(model_results=models)  
+    
     return fig, models

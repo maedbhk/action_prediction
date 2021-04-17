@@ -113,7 +113,7 @@ def compute_train_cv_error(model, train, test, data_to_predict):
     
     return training_rmse, validation_rmse
 
-def compare_models(model_results):
+def compare_models(model_results, ):
     """Does model comparison and visualizes RMSE for training and validation
     
     Args: 
@@ -125,9 +125,10 @@ def compare_models(model_results):
     model_names = model_results['model_name'].unique()
     fig = go.Figure(
         [go.Bar(x=model_names, y=model_results['train_rmse'], name='Training RMSE'),
-        go.Bar(x=model_names, y=model_results['cv_rmse'], name='CV RMSE')]
-        )
-    fig.update_yaxes({'range': [0.4, 0.45]})
+        go.Bar(x=model_names, y=model_results['cv_rmse'], name='CV RMSE')], layout=go.Layout(
+        title=go.layout.Title(text="Accuracy Prediction Models")))
+    fig.update_yaxes({'range': [0.4, 0.45]}, title_text= "RMSE")
+
 
     return fig
 

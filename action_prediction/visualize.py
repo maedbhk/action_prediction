@@ -143,42 +143,63 @@ def corr_plot(corr_mat, labels):
     ax.set_yticklabels(labels)
     plt.show()
 
-def plot_fixation_count(dataframe, x='run_num', hue=None, save=True):
+def plot_fixation_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = ""):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'), ci=None)   
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))   
     plt.xticks(rotation='45'); 
-    plt.xlabel('')
+    plt.xlabel(x_title)
     plt.ylabel("Fixation Count", size=15);
     plt.title(task)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.tight_layout()
+    _save_fig(plt, fig_title)
 
-    if save:
-        _save_fig(plt, f'fixation_count_{task}.png')
-
-def plot_saccade_count(dataframe, x='run_num', hue=None):
+def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = ''):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else:
          df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
 
-    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), ci=None)
+    sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
     plt.xticks(rotation='45');
-    plt.xlabel('')
+    plt.xlabel(x_title)
     plt.ylabel("Saccade Count", size=15);
     plt.title(task)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.tight_layout()
+    _save_fig(plt, fig_title)
+
+def plot_all_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = ""):
+    task = dataframe['task'].unique()[0]
+    if hue:
+        df = dataframe.groupby([x, hue,'subj'])["type"].count().reset_index(name='count')
+    else:
+         df = dataframe.groupby([x, 'subj'])['type'].count().reset_index(name="count")
+
+    sns.barplot(x=x, y='count', hue=hue, data=df)
+    plt.xticks(rotation='45');
+    plt.xlabel(x_title)
+    plt.ylabel("Average Count", size=15);
+    plt.title(task)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45)
+    elif x=='run_num':
+        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.tight_layout()
+    _save_fig(plt, fig_title)
+
 
 def plot_diameter(dataframe, x='run_num', event_type='fixations', hue=None):
     task = dataframe['task'].unique()[0]
@@ -190,29 +211,32 @@ def plot_diameter(dataframe, x='run_num', event_type='fixations', hue=None):
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
 
-def plot_amplitude(dataframe, x='run_num', hue=None):
+def plot_amplitude(dataframe, x='run_num', hue=None, x_title = "", fig_title = ""):
     task = dataframe['task'].unique()[0]
     sns.factorplot(x=x, y='amplitude', hue=hue, data=dataframe.query('type=="saccade"'))
     plt.xticks(rotation='45'); 
     plt.title(task)
+    plt.xlabel(x_title)
     if x=='block_iter_corr':
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.tight_layout()
+    _save_fig(plt, fig_title)
 
-def plot_fixation_duration(dataframe, x='run_num', hue=None, save=True):
+def plot_fixation_duration(dataframe, x='run_num', hue=None, x_title = " ", fig_title = " "):
     task = dataframe['task'].unique()[0]
     sns.factorplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
     plt.xticks(rotation='45'); 
     plt.title(task)
+    plt.xlabel(x_title)
     if x=='block_iter_corr':
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
     plt.ylabel('Duration (ms)')
-    
-    if save:
-        _save_fig(plt, f'fixation_duration_{task}.png')
+    plt.tight_layout()
+    _save_fig(plt, fig_title)
 
 def plot_dispersion(dataframe, x='run_num', hue=None):
     task = dataframe['task'].unique()[0]
@@ -332,19 +356,39 @@ def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     
     return fig
 
-def plot_acc(dataframe, x='run_num', hue='condition_name'):
-    sns.factorplot(x=x,y='corr_resp', hue=hue, data=dataframe)
+def plot_acc(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", fig_title = " "):
+
+    acc_plot = sns.factorplot(x=x,y='corr_resp', hue=hue, data=dataframe, legend= False)
+    #if legend_out == True:
+        #acc_plot._legend.set_title(legend_title)
+    #plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
+    plt.ylabel("Accuracy (%)")
+    plt.xlabel(x_title)
+    #plt.title(title)
+    plt.tight_layout()
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0, title= legend_title)
+
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    _save_fig(plt, fig_title)
 
-def plot_rt(dataframe, x='run_num', hue='condition_name'):
-    sns.factorplot(x=x,y='rt', hue=hue, data=dataframe.query('corr_resp==True'))
+def plot_rt(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", legend_out= True, fig_title = " "):
+    rt_plot= sns.factorplot(x=x,y='rt', hue=hue, data=dataframe.query('corr_resp==True'))
+    
+    if legend_out == True:
+        rt_plot._legend.set_title(legend_title)
+    plt.ylabel("Reaction Time (ms)")
+    plt.xlabel(x_title)
+    #plt.title(title)
+    plt.tight_layout()
+
     if x=='block_iter_corr':
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    _save_fig(plt, fig_title)
 
 
  
