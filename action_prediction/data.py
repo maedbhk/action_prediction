@@ -29,6 +29,11 @@ class DataSet:
             return df
         else:
             return self.preprocess_behav(save=True) 
+
+    def load_participants(self):
+        df = pd.read_csv('confirmed_participants.csv')
+        return df
+        
     
     def preprocess_eye(self, data_type='events', save=False):
         """loads preprocessed eyetracking data 
