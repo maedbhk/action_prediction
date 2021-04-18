@@ -149,16 +149,17 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, x_title = "", fig_titl
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
-
     sns.lineplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))   
     plt.title(fig_title, loc = "left", pad= 40.0)
-    plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     plt.xlabel(x_title, labelpad = 20.0)
     plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
+    plt.xticks(rotation='45')
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+        plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+
     plt.tight_layout()
     _save_fig(plt, save_title)
 
@@ -227,14 +228,14 @@ def plot_fixation_duration(dataframe, x='run_num', hue=None, x_title = " ", fig_
     task = dataframe['task'].unique()[0]
     sns.lineplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
     plt.title(fig_title, loc = "left", pad= 40.0)
-    plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+    plt.xticks(rotation='45')
     plt.xlabel(x_title, labelpad = 20.0)
-    plt.ylabel('Duration (ms)', labelpad = 20.0)
+    plt.ylabel('Fixation Duration (ms)', labelpad = 20.0)
     if x=='block_iter_corr':
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
-    
+        plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     _save_fig(plt, save_title)
 
 def plot_dispersion(dataframe, x='run_num', hue=None):
@@ -355,25 +356,27 @@ def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     
     return fig
 
+#only use when x= run_num
 def plot_acc(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", fig_title = " ", save_title = ""):
 
     acc_plot = sns.lineplot(x=x,y='corr_resp', hue=hue, data=dataframe, legend= True)
     plt.legend(
-    bbox_to_anchor=(1.05, 1), 
+    bbox_to_anchor=(1.22, 1), 
     loc='upper right', title = legend_title)
     plt.ylabel("Accuracy (%)", labelpad = 20.0)
     plt.xlabel(x_title, labelpad = 20.0)
-    plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     plt.title(fig_title, loc = "left", pad= 40.0)
+    plt.xticks(rotation='45')
+
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+        plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+        plt.legend(bbox_to_anchor=(1.05, 1))
+
     #plt.tight_layout()
     _save_fig(plt, save_title)
-
-
-    
 
 def plot_rt(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", fig_title = " ", save_title= ""):
   
