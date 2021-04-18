@@ -143,17 +143,18 @@ def corr_plot(corr_mat, labels):
     ax.set_yticklabels(labels)
     plt.show()
 
-def plot_fixation_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = "", save_title = ""):
+def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_title = "", legend_title="", fig_title = "", save_title = ""):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
-    sns.lineplot(x=x, y='count', hue=hue, data=df.query('type=="fixations"'))   
+    sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False)   
     plt.title(fig_title, loc = "left", pad= 40.0)
     plt.xlabel(x_title, labelpad = 20.0)
     plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
     plt.xticks(rotation='45')
+    plt.legend(title = legend_title)
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
@@ -226,7 +227,7 @@ def plot_amplitude(dataframe, x='run_num', hue=None, x_title = "", fig_title = "
 
 def plot_fixation_duration(dataframe, x='run_num', hue=None, x_title = " ", fig_title = " ", save_title = ""):
     task = dataframe['task'].unique()[0]
-    sns.lineplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
+    sns.factorplot(x=x, y='duration', hue=hue, data=dataframe.query('type=="fixations"'))
     plt.title(fig_title, loc = "left", pad= 40.0)
     plt.xticks(rotation='45')
     plt.xlabel(x_title, labelpad = 20.0)
@@ -357,9 +358,9 @@ def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     return fig
 
 #only use when x= run_num
-def plot_acc(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", fig_title = " ", save_title = ""):
+def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = " ", fig_title = " ", save_title = ""):
 
-    acc_plot = sns.lineplot(x=x,y='corr_resp', hue=hue, data=dataframe, legend= True)
+    acc_plot = sns.factorplot(x=x,y='corr_resp', hue=hue, data=dataframe, legend= False)
     plt.legend(
     bbox_to_anchor=(1.22, 1), 
     loc='upper right', title = legend_title)
@@ -378,9 +379,9 @@ def plot_acc(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_
     #plt.tight_layout()
     _save_fig(plt, save_title)
 
-def plot_rt(dataframe, x='run_num', hue='condition_name', x_title= " ", legend_title = " ", fig_title = " ", save_title= ""):
+def plot_rt(dataframe, x='run_num', hue=None, hue_order=None, x_title= " ", legend_title = " ", fig_title = " ", save_title= ""):
   
-    rt_plot= sns.lineplot(x=x,y='rt', hue=hue, data=dataframe.query('corr_resp==True'), legend=True)
+    rt_plot= sns.lineplot(x=x,y='rt', hue=hue, hue_order=hue_order, data=dataframe.query('corr_resp==True'), legend=True)
         # rt_plot._legend.set_title(legend_title)
     plt.legend(
     bbox_to_anchor=(1, 1), 
