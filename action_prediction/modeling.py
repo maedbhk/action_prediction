@@ -126,7 +126,7 @@ def compare_models(model_results, ):
     fig = go.Figure(
         [go.Bar(x=model_names, y=model_results['train_rmse'], name='Training RMSE'),
         go.Bar(x=model_names, y=model_results['cv_rmse'], name='CV RMSE')], layout=go.Layout(
-        title=go.layout.Title(text="Accuracy Prediction Models")))
+        title=go.layout.Title(text="Model Performance")))
     fig.update_yaxes({'range': [0.4, 0.45]}, title_text= "RMSE")
 
 
