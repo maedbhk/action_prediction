@@ -149,9 +149,22 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
+<<<<<<< HEAD
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")   
     if x=='run_num':
         sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'))  
+=======
+        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
+    sns.lineplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False)   
+    plt.title(fig_title, loc = "left", pad= 40.0)
+    plt.xlabel(x_title, labelpad = 20.0)
+    plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
+    plt.xticks(rotation='45')
+    plt.legend(title = legend_title)
+    if x=='block_iter_corr':
+        plt.xticks(rotation=45)
+    elif x=='run_num':
+>>>>>>> afdb9b9df0aae99af194f564cee6d90a91807774
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     else:
@@ -395,7 +408,12 @@ def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = None
     _save_fig(plt, save_title)
 
 def plot_rt(dataframe, x='run_num', hue=None, hue_order=None, x_title= " ", legend_title = " ", fig_title = " ", save_title= ""):
+<<<<<<< HEAD
     rt_plot= sns.lineplot(x=x,y='rt', hue=hue, hue_order=hue_order, data=dataframe.query('corr_resp==True'), legend=True)
+=======
+  
+    rt_plot= sns.factorplot(x=x,y='rt', hue=hue, hue_order=hue_order, data=dataframe.query('corr_resp==True'), legend=True)
+>>>>>>> afdb9b9df0aae99af194f564cee6d90a91807774
         # rt_plot._legend.set_title(legend_title)
     plt.legend(
     bbox_to_anchor=(1, 1), 

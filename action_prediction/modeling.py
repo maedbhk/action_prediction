@@ -109,11 +109,11 @@ def compute_train_cv_error(model, train, test, data_to_predict):
 
     # Compute the test error for each model (don't do this!)
     # WE SHOULD BE TESTING THE WINNING MODEL HERE (WHICHEVER MODEL YIELDED LOWEST TRAIN AND CV ERROR)
-    #     test_rmse = rmse(test[data_to_predict], model.predict(test))
+    test_rmse = rmse(test[data_to_predict], model.predict(test))
     
-    return training_rmse, validation_rmse
+    return training_rmse, validation_rmse, test_rmse
 
-def compare_models(model_results, ):
+def compare_models(model_results):
     """Does model comparison and visualizes RMSE for training and validation
     
     Args: 
@@ -122,15 +122,28 @@ def compare_models(model_results, ):
     Returns: 
         Plot comparing model performance (training RMSE versus CV RMSE)
     """
+<<<<<<< HEAD
     model_names = model_results['model_name'].unique()
     fig = go.Figure(
         [go.Bar(x=model_names, y=model_results['train_rmse'], name='Training RMSE'),
         go.Bar(x=model_names, y=model_results['cv_rmse'], name='CV RMSE')], layout=go.Layout(
         title=go.layout.Title(text="Model Performance")))
     fig.update_yaxes({'range': [0.4, 0.45]}, title_text= "RMSE")
+=======
+    # get best model (based on cv rmse)
+    tmp = model_results.groupby(['model_name']).mean().reset_index()
+    best_model = tmp[tmp["cv_rmse"] == tmp["cv_rmse"].min()]["model_name"].values[0]
+>>>>>>> afdb9b9df0aae99af194f564cee6d90a91807774
 
+    model_results['test_rmse'] = np.where((model_results.model_name != best_model),0, model_results.test_rmse)
 
-    return fig
+    # melt dataframe for plotting
+    models_melt = model_results.melt(value_vars=['train_rmse', 'cv_rmse', 'test_rmse'], id_vars=['model_name', 'subj'])
+
+    sns.barplot(x='model_name', y='value', hue='variable', data=models_melt)
+
+    plt.show()
+
 
 def define_model(quant_features, qual_features):
     """Define model
