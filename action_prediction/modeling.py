@@ -115,7 +115,7 @@ def compute_train_cv_error(model, train, test, data_to_predict):
     
     return training_rmse, validation_rmse, test_rmse
 
-def compare_models(model_results, palette = None, ):
+def compare_models(model_results, palette = None):
     """Does model comparison and visualizes RMSE for training and validation
     
     Args: 
@@ -133,12 +133,13 @@ def compare_models(model_results, palette = None, ):
     # melt dataframe for plotting
     models_melt = model_results.melt(value_vars=['train_rmse', 'cv_rmse', 'test_rmse'], id_vars=['model_name', 'subj'])
 
-    model_bar= sns.barplot(x='model_name', y='value', hue='variable', data=models_melt, capsize= .2, palette = palette)
+    model_bar= sns.barplot(x='model_name', y='value', hue='variable', data=models_melt, capsize= .1, palette = palette)
     model_bar.legend(bbox_to_anchor=(1.5, 1),loc='upper right', title = "Model Type")
     
-    plt.xlabel("Model Type", labelpad = 20.0, size = 20)
-    plt.ylabel("RMSE", labelpad = 20.0, size = 20)
+    plt.xlabel("Model Type", labelpad = 20.0, size = 15)
+    plt.ylabel("RMSE", labelpad = 20.0, size =15)
     plt.xticks(rotation='45', size = 15)
+    plt.ylim([0.39, 0.46])
 
     plt.show()
 
