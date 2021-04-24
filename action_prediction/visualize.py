@@ -9,11 +9,12 @@ from matplotlib.gridspec import GridSpec
 from datetime import date
 
 from action_prediction import constants as const
+
 import warnings
 warnings.filterwarnings("ignore")  
 
 def plotting_style():
-    #fig = plt.figure(num=2, figsize=[20,8])
+    plt.figure(num=2, figsize= [2,2], dpi=300)
     plt.style.use('seaborn-poster') # ggplot
     plt.rc('font', family='sans-serif') 
     plt.rc('font', serif='Helvetica Neue') 

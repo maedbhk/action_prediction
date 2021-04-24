@@ -14,6 +14,8 @@ from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import make_column_selector as selector
 
+from action_prediction import visualize as vis
+
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -115,7 +117,7 @@ def compute_train_cv_error(model, train, test, data_to_predict):
     
     return training_rmse, validation_rmse, test_rmse
 
-def compare_models(model_results, palette = None):
+def compare_models(model_results, save_fig = None):
     """Does model comparison and visualizes RMSE for training and validation
     
     Args: 
@@ -133,13 +135,16 @@ def compare_models(model_results, palette = None):
     # melt dataframe for plotting
     models_melt = model_results.melt(value_vars=['train_rmse', 'cv_rmse', 'test_rmse'], id_vars=['model_name', 'subj'])
 
-    model_bar= sns.barplot(x='model_name', y='value', hue='variable', data=models_melt, capsize= .1, palette = palette)
-    model_bar.legend(bbox_to_anchor=(1.5, 1),loc='upper right', title = "Model Type")
+    model_bar= sns.barplot(x='model_name', y='value', hue='variable', data=models_melt, capsize= .1, palette = ['#ec7014', '#6a51a3', '#016c59'])
+    model_bar.legend(bbox_to_anchor=(1, 1),loc='upper right', title = "Model Type")
     
-    plt.xlabel("Model Type", labelpad = 20.0, size = 15)
+    plt.xlabel("", labelpad = 20.0, size = 15, )
     plt.ylabel("RMSE", labelpad = 20.0, size =15)
     plt.xticks(rotation='45', size = 15)
-    plt.ylim([0.39, 0.46])
+    plt.ylim([0.38, 0.46])
+    #plt.savefig(fname = "model.png", bbox_inches= 'tight', pad_inches = .25, dpi= 100)
+    vis._save_fig(plt, fname = "model.png")
+
 
     plt.show()
 
