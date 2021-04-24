@@ -149,8 +149,7 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
-        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
-    sns.lineplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False)   
+        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")  
     plt.title(fig_title, loc = "left", pad= 40.0)
     plt.xlabel(x_title, labelpad = 20.0)
     plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
@@ -159,6 +158,7 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     if x=='block_iter_corr':
         plt.xticks(rotation=45)
     elif x=='run_num':
+        sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False) 
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     else:
@@ -168,7 +168,7 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     plt.title(fig_title, loc = "left", pad= 40.0, size= 27)
     plt.xlabel(x_title, labelpad = 20.0, size = 27)
     plt.ylabel("Fixation Count", labelpad = 20.0, size = 27)
-    plt.xticks(rotation='45', size = 20)
+    plt.xticks(rotation='45', size = 20, ha= 'left')
     #plt.legend(
    # bbox_to_anchor=(1.30, 1.00), 
     #loc='upper right', title = legend_title)
@@ -247,8 +247,8 @@ def plot_fixation_duration(dataframe, x= "", hue=None, x_title = " ", fig_title 
       #  plt.xticks(rotation=45) 
     if x=='run_num':
         sns.factorplot(x=x, y='duration', hue=hue, hue_order=hue_order, data= dataframe.query('type=="fixations"'))  
-        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
-        plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+        plt.axvline(x=6, ymin=0, color='k', linestyle='--')
+        plt.xticks(ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha= "left")
 
     else:
         plot_fix= sns.barplot(x=x, y='duration', hue=hue, hue_order=hue_order, data= dataframe.query('type=="fixations"'), capsize= .2, palette = palette)
@@ -386,8 +386,8 @@ def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = None
         plt.xticks(rotation=45)
     elif x== 'run_num':
         sns.factorplot(x=x, y='corr_resp', hue=hue, hue_order = hue_order, data=dataframe, legend= False, palette = palette)
-        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
-        plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+        plt.axvline(x=6, ymin=0, color='k', linestyle='--')
+        plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha = "right")
         plt.legend(bbox_to_anchor=(1.0, 1), loc='lower right', title = legend_title) 
     else: 
         acc_bar = sns.barplot(x=x, y='corr_resp', hue=hue, hue_order = hue_order, data=dataframe)   
@@ -397,6 +397,7 @@ def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = None
     plt.xlabel(x_title, labelpad = 20.0)
     plt.title(fig_title, loc = "left", pad= 40.0)
     plt.xticks(rotation='45')
+    #plt.figtext(x=-.2, y= -.2, s= "Fig. 1: Accuracy across runs for easy vs. hard conditions. Dashed line denotes start of Session 2.", fontstyle = "italic")
 
     #plt.tight_layout()
     _save_fig(plt, save_title)
