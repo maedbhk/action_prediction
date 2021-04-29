@@ -391,7 +391,7 @@ def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = None
         plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha = "right")
         plt.legend(bbox_to_anchor=(1.0, 1), loc='lower right', title = legend_title) 
     else: 
-        acc_bar = sns.barplot(x=x, y='corr_resp', hue=hue, hue_order = hue_order, data=dataframe)   
+        acc_bar = sns.barplot(x=x, y='corr_resp', hue=hue, order = hue_order, data=dataframe, palette = palette)   
         acc_bar.legend(bbox_to_anchor=(0, 1),loc='upper right', title = legend_title)
     
     plt.ylabel("Accuracy", labelpad = 20.0)
