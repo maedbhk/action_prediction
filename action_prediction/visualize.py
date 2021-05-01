@@ -145,20 +145,20 @@ def corr_plot(corr_mat, labels):
     ax.set_yticklabels(labels)
     plt.show()
 
-def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_title = "", legend_title="", fig_title = None, save_title = None, palette = None):
+def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_title =None, legend_title=None, fig_title = None, save_title = None, palette = None):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else: 
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")  
-    plt.title(fig_title, loc = "left", pad= 40.0)
-    plt.xlabel(x_title, labelpad = 20.0)
-    plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
-    plt.xticks(rotation='45')
-    plt.legend(title = legend_title)
-    if x=='block_iter_corr':
-        plt.xticks(rotation=45)
-    elif x=='run_num':
+    #plt.title(fig_title, loc = "left", pad= 40.0)
+   ## plt.xlabel(x_title, labelpad = 20.0)
+    #plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
+    #plt.xticks(rotation='45')
+    #plt.legend(title = legend_title)
+    #if x=='block_iter_corr':
+        #plt.xticks(rotation=45)
+    if x=='run_num':
         sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False) 
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
@@ -380,19 +380,19 @@ def plot_heatmap(dataframe, dispsize=(1280, 720), img=None, alpha=0.5):
     
     return fig
 
-def plot_acc(dataframe, x='run_num', hue=None, x_title= " ", legend_title = None, fig_title = None, save_title = None, hue_order = None, palette = None):
+def plot_acc(dataframe, x='run_num', hue=None, x_title= None, legend_title = None, fig_title = None, save_title = None, hue_order = None, order= None, palette = None):
     #acc_plot = sns.factorplot(x=x, y='corr_resp', hue=hue, hue_order = hue_order, data=dataframe, legend= False)   
 
-    if x=='block_iter_corr':
-        plt.xticks(rotation=45)
-    elif x== 'run_num':
+    #if x=='block_iter_corr':
+        #plt.xticks(rotation=45)
+    if x== 'run_num':
         sns.factorplot(x=x, y='corr_resp', hue=hue, hue_order = hue_order, data=dataframe, legend= False, palette = palette)
         plt.axvline(x=6, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha = "right")
         plt.legend(bbox_to_anchor=(1.0, 1), loc='lower right', title = legend_title) 
     else: 
-        acc_bar = sns.barplot(x=x, y='corr_resp', hue=hue, order = hue_order, data=dataframe, palette = palette)   
-        acc_bar.legend(bbox_to_anchor=(0, 1),loc='upper right', title = legend_title)
+        plot_acc = sns.barplot(x=x, y='corr_resp', hue=hue, order = order, data=dataframe, palette = palette)   
+        plot_acc.legend(bbox_to_anchor=(0, 1),loc='upper right', title = legend_title)
     
     plt.ylabel("Accuracy", labelpad = 20.0)
     plt.xlabel(x_title, labelpad = 20.0)
