@@ -148,9 +148,9 @@ def corr_plot(corr_mat, labels):
 def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_title =None, legend_title=None, fig_title = None, save_title = None, palette = None):
     task = dataframe['task'].unique()[0]
     if hue:
-        df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
+        df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count').query('type=="fixations"')
     else: 
-        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")  
+        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count").query('type=="fixations"')
     #plt.title(fig_title, loc = "left", pad= 40.0)
    ## plt.xlabel(x_title, labelpad = 20.0)
     #plt.ylabel("Fixation Count", size=15, labelpad = 20.0)
@@ -159,11 +159,11 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     #if x=='block_iter_corr':
         #plt.xticks(rotation=45)
     if x=='run_num':
-        sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), legend=False) 
+        sns.factorplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df, legend=False) 
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     else:
-        plot_fix= sns.barplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df.query('type=="fixations"'), capsize= .2, palette = palette)
+        plot_fix= sns.barplot(x=x, y='count', hue=hue, hue_order=hue_order, data=df, capsize= .2, palette = palette)
         plot_fix.legend(bbox_to_anchor=(1, 1),loc='upper right', title = legend_title)
     
     plt.title(fig_title, loc = "left", pad= 40.0, size= 27)
@@ -201,9 +201,9 @@ def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title
 def plot_all_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = "", save_title = " "):
     task = dataframe['task'].unique()[0]
     if hue:
-        df = dataframe.groupby([x, hue,'subj'])["type"].count().reset_index(name='count')
+        df = dataframe.groupby([x, hue,'subj'])["type"].count().reset_index(name='count').query('type != "blink"')
     else:
-         df = dataframe.groupby([x, 'subj'])['type'].count().reset_index(name="count")
+         df = dataframe.groupby([x, 'subj'])['type'].count().reset_index(name="count").query('type != "blink"')
 
     sns.barplot(x=x, y='count', hue=hue, data=df)
     plt.xticks(rotation='45');
