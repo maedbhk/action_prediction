@@ -185,17 +185,20 @@ def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else:
-         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
-
-    sns.lineplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
+        df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
+    if x=='run_num':
+        sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
+        plt.axvline(x=6, ymin=0, color='k', linestyle='--')
+        plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1))
+    else: 
+        sns.barplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
     plt.title(fig_title, loc = "left", pad= 40.0)
-    plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
     plt.xlabel(x_title, labelpad = 20.0)
-    plt.ylabel("Saccade Count", labelpad = 20.0);
-    if x=='block_iter_corr':
-        plt.xticks(rotation=45)
-    elif x=='run_num':
-        plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+    plt.ylabel("Saccade Count", labelpad = 20.0)
+   # if x=='block_iter_corr':
+        #plt.xticks(rotation=45)
+
+   
     _save_fig(plt, save_title)
 
 def plot_all_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = "", save_title = " "):
@@ -413,12 +416,21 @@ def plot_rt(dataframe, x='run_num', hue=None, hue_order=None, x_title= " ", lege
     plt.ylabel("Reaction Time (ms)", labelpad = 20.0)
     plt.xlabel(x_title, labelpad = 20.0)
     plt.title(fig_title, loc = "left", pad= 40.0)
-    plt.xticks(rotation='45', ticks= np.arange(1, 15, step=1), labels = np.arange(1, 15, step=1))
+
     if x=='block_iter_corr':
         plt.xticks(rotation=45) 
     elif x=='run_num':
         plt.axvline(x=7, ymin=0, color='k', linestyle='--')
+        plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha = "right")
+
     #plt.tight_layout()
+    _save_fig(plt, save_title)
+
+def corr_plot(dataframe, x='rt', y= 'corr_resp', hue=None, hue_order=None, x_title= None, y_title= None, legend_title = None, fig_title = None, save_title= None):
+    sns.lmplot(x=x, y=y, data=dataframe)
+    plt.title(fig_title, loc = "left", pad= 40.0)
+    plt.xlabel(x_title, labelpad = 20.0)
+    plt.ylabel(y_title, labelpad = 20.0)
     _save_fig(plt, save_title)
 
 
