@@ -180,18 +180,18 @@ def plot_fixation_count(dataframe, x='run_num', hue=None, hue_order=None, x_titl
     #plt.tight_layout()
     _save_fig(plt, save_title)
 
-def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = '', save_title = ""):
+def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = '', save_title = "", palette= None):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue, 'type', 'subj'])["type"].count().reset_index(name='count')
     else:
         df = dataframe.groupby([x, 'type', 'subj'])['type'].count().reset_index(name="count")
     if x=='run_num':
-        sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
+        sns.factorplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), palette = palette)
         plt.axvline(x=6, ymin=0, color='k', linestyle='--')
         plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1))
     else: 
-        sns.barplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'))
+        sns.barplot(x=x, y='count', hue=hue, data=df.query('type=="saccade"'), palette = palette)
     plt.title(fig_title, loc = "left", pad= 40.0)
     plt.xlabel(x_title, labelpad = 20.0)
     plt.ylabel("Saccade Count", labelpad = 20.0)
@@ -201,14 +201,14 @@ def plot_saccade_count(dataframe, x='run_num', hue=None, x_title = "", fig_title
    
     _save_fig(plt, save_title)
 
-def plot_all_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = "", save_title = " "):
+def plot_all_count(dataframe, x='run_num', hue=None, x_title = "", fig_title = "", save_title = " ", palette= None):
     task = dataframe['task'].unique()[0]
     if hue:
         df = dataframe.groupby([x, hue,'subj'])["type"].count().reset_index(name='count').query('type != "blink"')
     else:
          df = dataframe.groupby([x, 'subj'])['type'].count().reset_index(name="count").query('type != "blink"')
 
-    sns.barplot(x=x, y='count', hue=hue, data=df)
+    sns.barplot(x=x, y='count', hue=hue, data=df, palette = palette)
     plt.xticks(rotation='45');
     plt.xlabel(x_title, labelpad = 20.0)
     plt.ylabel("Average Count", size=15, labelpad = 20.0);
@@ -394,8 +394,8 @@ def plot_acc(dataframe, x='run_num', hue=None, x_title= None, legend_title = Non
         plt.xticks(rotation='45', ticks= np.arange(0, 14, step=1), labels = np.arange(1, 15, step=1), ha = "right")
         plt.legend(bbox_to_anchor=(1.0, 1), loc='lower right', title = legend_title) 
     else: 
-        plot_acc = sns.barplot(x=x, y='corr_resp', hue=hue, order = order, data=dataframe, palette = palette)   
-        plot_acc.legend(bbox_to_anchor=(0, 1),loc='upper right', title = legend_title)
+        plot_acc = sns.barplot(x=x, y='corr_resp', hue=hue, order = order, hue_order = hue_order, data=dataframe, palette = palette)   
+        plot_acc.legend(bbox_to_anchor=(1.0, 1), loc='lower right', title = legend_title) 
     
     plt.ylabel("Accuracy", labelpad = 20.0)
     plt.xlabel(x_title, labelpad = 20.0)

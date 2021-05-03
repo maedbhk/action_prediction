@@ -27,13 +27,13 @@ def get_model_features(model_name):
     Returns: 
         quant_features (list of str), qual_features (list of str)
     """
-    if model_name=='eyetracking':
+    if model_name=='eye-tracking':
         quant_features = ['duration', 'amplitude', 'dispersion', 'peak_velocity', 'mean_gx', 'mean_gy']
         qual_features = ['type']
-    elif model_name=='social':
+    elif model_name=='context':
         quant_features = ['rt']
         qual_features = ['actors', 'initiator', 'label', 'condition_name']
-    elif model_name=='social+eyetracking':
+    elif model_name=='eye-tracking + context':
         quant_features = ['rt', 'duration', 'amplitude', 'dispersion', 'peak_velocity', 'mean_gx', 'mean_gy']
         qual_features = ['actors', 'initiator', 'label', 'condition_name', 'type']
     else:
