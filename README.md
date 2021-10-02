@@ -5,9 +5,15 @@ action_prediction
 
 This project is part of the final project of my PhD thesis. I collected 12 hours of varsity soccer players taking penalty shots at 16 unique targets (incorporating a difficulty manipulation).Then, I designed an experiment to test human participants on their ability to predict the direction of the ball (left or right) and I used behavioral performance and eye-tracking as metrics of learning. Next, I used deeplabcut (http://www.mackenziemathislab.org/deeplabcut) to perform markerless labeling of the players' effectors, and I trained a model on these features to determine accuracy of the model relative to human learners. This project is still a work in progress so the final model is still undetermined (hopefully soon!). 
 
-> NOTE: I also collected 15 hours of actors engaging in social greetings: hugging, high-fiving, shaking hands in order to make action predictions in a social context.
+> NOTE: I also collected 15 hours of actors engaging in social greetings: hugging, high-fiving, shaking hands in order to make action predictions in a social context. I'm currently analyzing these data. 
+
+### Markerless labeling of soccer player taking penalty shot
+I used deeplabcut to label in real-time the effectors (shoulder, knee, arm, leg etc.) of 3 varsity soccer players as they took directed penalty shots at 16 unique targets. 
 
 [![Markerless labeling of soccer players](https://res.cloudinary.com/marcomontalbano/image/upload/v1633201853/video_to_markdown/images/google-drive--1UYxtM0v1wjqGs36ATkP9FEOVmeedJjzz-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://drive.google.com/file/d/1UYxtM0v1wjqGs36ATkP9FEOVmeedJjzz/view?usp=sharing "Markerless labeling of soccer players")
+
+### Plot poses tracking the player's body movements
+The relative position of the effectors are plotted in 2D as the soccer player runs and takes a penalty shot. X and Y positions are given in pixels. 
 
 ![trajectory_filtered](https://user-images.githubusercontent.com/28731306/135729298-933f530f-c79b-47ba-af74-f31b00270cf5.png)
 
