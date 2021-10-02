@@ -7,6 +7,8 @@ This project is part of the final project of my PhD thesis. I collected 12 hours
 
 > NOTE: I also collected 15 hours of actors engaging in social greetings: hugging, high-fiving, shaking hands in order to make action predictions in a social context.
 
+[![Alternate Text]({https://drive.google.com/drive/u/0/folders/1Ja3YH-hqXmr6LDpSGEex2IV0zRVPzjMx/view})]({https://drive.google.com/drive/u/0/folders/1snSGecMvJ10df3lkRI9asdSx8_I52orS} "Link Title")
+
 ### Installing the Required Python Packages
 
 This project uses [`pipenv`](https://github.com/pypa/pipenv) for virtual environment and python package management.
