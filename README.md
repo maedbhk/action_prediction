@@ -7,7 +7,7 @@ This project is part of the final project of my PhD thesis. I collected 12 hours
 
 > NOTE: I also collected 15 hours of actors engaging in social greetings: hugging, high-fiving, shaking hands in order to make action predictions in a social context.
 
-[![Alternate Text]({https://drive.google.com/drive/u/0/folders/1Ja3YH-hqXmr6LDpSGEex2IV0zRVPzjMx/view})]({https://drive.google.com/drive/u/0/folders/1snSGecMvJ10df3lkRI9asdSx8_I52orS} "Link Title")
+[![Markerless labeling of soccer players](https://res.cloudinary.com/marcomontalbano/image/upload/v1633201853/video_to_markdown/images/google-drive--1UYxtM0v1wjqGs36ATkP9FEOVmeedJjzz-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://drive.google.com/file/d/1UYxtM0v1wjqGs36ATkP9FEOVmeedJjzz/view?usp=sharing "Markerless labeling of soccer players")
 
 ### Installing the Required Python Packages
 
