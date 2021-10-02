@@ -11,11 +11,10 @@ This project is part of the final project of my PhD thesis. I collected 12 hours
 
 ![trajectory_filtered](https://user-images.githubusercontent.com/28731306/135729298-933f530f-c79b-47ba-af74-f31b00270cf5.png)
 
-### Installing the Required Python Packages
+### Research Assistants: Installing the Required Python Packages
 
 This project uses [`pipenv`](https://github.com/pypa/pipenv) for virtual environment and python package management.
-
-For research assistants working on this project, make sure that you have installed `pyenv` and `pipenv`.
+Make sure that you have installed `pyenv` and `pipenv`.
 
 Install `pyenv` using Homebrew:
 
